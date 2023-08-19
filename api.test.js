@@ -32,4 +32,22 @@ describe("API workflow", () => {
 
     deepStrictEqual(response, { error: "user invalid" });
   });
+
+  it("should login successfully given use and password ", async () => {
+    const data = {
+      user: "lucas",
+      password: "nathan",
+    };
+
+    const request = await fetch(BASE_URL + "/login", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+
+    strictEqual(request.status, 200);
+
+    const response = await request.json();
+
+    ok(response.token, "token should be present");
+  });
 });
