@@ -5,6 +5,7 @@ const BASE_URL = "http://localhost:3000";
 
 describe("API workflow", () => {
   let _server = {};
+  let _globalToken = "";
 
   before(async () => {
     _server = (await import("./api.js")).app;
@@ -49,5 +50,26 @@ describe("API workflow", () => {
     const response = await request.json();
 
     ok(response.token, "token should be present");
+    _globalToken = response.token;
+  });
+
+  it("should not be allowed to access private data without a token", async () => {
+    const data = {
+      user: "lucas",
+      password: "nathan",
+    };
+
+    const request = await fetch(BASE_URL, {
+      method: "GET",
+      headers: {
+        authorization: "",
+      },
+    });
+
+    strictEqual(request.status, 400);
+
+    const response = await request.json();
+
+    deepStrictEqual(response, { error: "invalid token" });
   });
 });
